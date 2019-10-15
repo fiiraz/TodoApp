@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+
+    <title>TEST</title>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">TODO APP</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+        <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+            <li class="nav-item ">
+                <a class="nav-link" href="#" th:href="@{/}">Home <span class="sr-only">(current)</span></a>
+            </li><li class="nav-item">
+                <a class="nav-link active" href="#" th:href="@{/todo/lists}">Lists</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" th:href="@{/addlist}">Add List</a>
+            </li>
+        </ul>
+        <form class="form-inline my-2 my-lg-0">
+            <a th:href="@{/logout}" class="btn btn-secondary" role="button" aria-pressed="true">Logout</a>
+            <!--			<li class="nav-item" sec:authorize="isAuthenticated()"><a class="nav-link" th:href="@{/logout}">Logout</a></li>-->
+        </form>
+    </div>
+</nav>
+
+<br>
+<br>
+<div class="container">
+    <div class="text-center" style="margin-bottom: 5px">
+        <h2>TODO Lists</h2>
+    </div>
+
+    <div th:if="${list.empty}">
+        <p>
+            There's no list!
+        </p>
+        <a href="#" th:href="@{/addlist}">Add New List</a>
+    </div>
+
+    <div class="table-responsive" th:each="list : ${list}">
+
+        <div class="container col-md-12">
+            <div class="row">
+                <div class="col-md-6">
+                    <h2><a th:href="@{'/todo/showlist/' + ${list.name}}" th:text="${list.name}"></a></h2>
+                </div>
+                <div class="col-md-6" style="text-align: right">
+                    <a th:href="@{'/todo/deletelist/' + ${list.name}}" class="text-danger">-Delete List</a>
+                </div>
+            </div>
+        </div>
+
+        <table class="table table-bordred table-striped" th:if="${list.items != null}">
+            <thead>
+                <th scope="col">ID</th>
+                <th scope="col">Items</th>
+                <th scope="col">Deadline</th>
+                <th scope="col">Dependency</th>
+                <th scope="col">Complete</th>
+                <th scope="col">Delete</th>
+            </thead>
+            <tbody>
+                <tr th:each="items : ${list.items}">
+                    <td th:text="${items.id}"></td>
+                    <td th:text="${items.name}"></td>
+                    <td>
+                        <div th:if="${items.endDate != null}">
+                            <h6 th:text="${items.endDate}"></h6>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="row" th:if="${items.dependentId != 0}">
+                            <div>
+                                <h6 th:text="${items.dependentId}"></h6>
+                            </div>
+                            <div class="col">
+                                <a th:href="@{'/todo/setindependent/' + ${items.id}}" class="btn btn-info text-white" role="button">-Independent</a>
+                            </div>
+                        </div>
+                        <div class="row" th:if="${items.dependentId == 0}">
+                            <div>
+
+                            </div>
+                            <div class="col">
+                                <a th:href="@{'/todo/getdependency/' + ${list.name} + '/' + ${items.id}}" class="btn btn-warning text-white" role="button">+Dependent</a>
+                            </div>
+                        </div>
+                    </td>
+                    <td th:if="${!items.completed}">
+                        <a th:href="@{'/todo/complete/' + ${items.id}}" class="btn btn-success text-white" role="button">Complete</a>
+                    </td>
+                    <td th:if="${items.completed}">
+                        <a class="btn btn-success text-white disabled" role="button" >Completed</a>
+                    </td>
+                    <td>
+                        <a th:href="@{'/todo/delete/' + ${items.id}}" class="btn btn-danger text-white" role="button">Delete</a>
+                    </td>
+                </tr>
+            </tbody>
+            <a th:href="@{'/additem/' + ${list.name}}" class="text-primary">+ Add New Item</a>
+        </table>
+
+
+        <p class="lead" th:if="${list.items == null}">
+            There's no item in this List!
+            <a th:href="@{'/additem/' + ${list.name}}" class="text-primary">+ Add New Item</a>
+        </p>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+</body>
+</html>
