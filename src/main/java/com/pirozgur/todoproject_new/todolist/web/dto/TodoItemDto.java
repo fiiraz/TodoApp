@@ -1,10 +1,14 @@
 package com.pirozgur.todoproject_new.todolist.web.dto;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotEmpty;
 import java.util.Date;
 
+@Getter
+@Setter
 public class TodoItemDto {
 
     @NotEmpty
@@ -15,27 +19,4 @@ public class TodoItemDto {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date enddate;
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getListname() {
-        return listname;
-    }
-
-    public void setListname(String listname) {
-        this.listname = listname;
-    }
-
-    public Date getEnddate() {
-        return enddate;
-    }
-
-    public void setEnddate(Date enddate) {
-        this.enddate = enddate;
-    }
 }
